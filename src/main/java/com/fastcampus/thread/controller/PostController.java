@@ -2,6 +2,8 @@ package com.fastcampus.thread.controller;
 
 
 import com.fastcampus.thread.model.Post;
+import com.fastcampus.thread.service.PostService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,13 +18,12 @@ import java.util.Optional;
 @RestController
 public class PostController {
 
+    @Autowired
+    private PostService postService;
 
     @GetMapping("/api/v1/posts")
     public ResponseEntity<List<Post>> getPosts(){
-        List<Post> posts = new ArrayList<>();
-        posts.add(new Post(1L, "첫번째 글", ZonedDateTime.now()));
-        posts.add(new Post(2L, "2번째 글", ZonedDateTime.now()));
-        posts.add(new Post(3L, "3번째 글", ZonedDateTime.now()));
+        List<Post> posts = postService.getPosts();
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 
