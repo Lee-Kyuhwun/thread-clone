@@ -30,6 +30,4 @@ public class Post {
     public int hashCode() {
         return Objects.hash(postId, body, createdDateTime);
     }
-
-
 }

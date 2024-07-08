@@ -20,7 +20,7 @@ public class PostController {
 
     @GetMapping
     public ResponseEntity<List<Post>> getPosts(){
-        List<Post> posts = postService.getPosts();
+        var posts = postService.getPosts();
         return ResponseEntity.ok(posts);
     }
 
@@ -35,12 +35,21 @@ public class PostController {
     
     @PostMapping
     public ResponseEntity<Post> createPost(@RequestBody PostPostRequestBody postPostRequestBody){
-        Post createdPost = postService.createPost(postPostRequestBody);
+        var createdPost = postService.createPost(postPostRequestBody);
         return ResponseEntity.ok(createdPost);
     }
     // ReuqestBody 정상동작하려면 PostPostRequestBody에 기본생성자가 있어야함
 
-
+    @PatchMapping("/{postId}")
+    public ResponseEntity<Post> updatePost(@RequestBody PostPatchRequestBody postPatchRequestBody, @PathVariable("postId") Long postId){
+        var post = postService.updatePost(postPatchRequestBody, postId);
+        return ResponseEntity.ok(post);
+    }
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<Void> deletePost(@PathVariable("postId") Long postId){
+        postService.deletePost(postId);
+        return ResponseEntity.noContent().build(); // 204
+    }
 
 
 }

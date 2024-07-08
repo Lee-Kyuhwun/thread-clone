@@ -8,14 +8,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class PostPostRequestBody {
-
-    private String body;
-
-    public PostPostRequestBody(String body) {
-        this.body = body;
-    }
-
-    public PostPostRequestBody() {
+public record PostPostRequestBody(
+        String body
+) {
+    public PostPostRequestBody {
     }
 }
