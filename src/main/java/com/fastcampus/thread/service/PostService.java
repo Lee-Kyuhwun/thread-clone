@@ -2,6 +2,7 @@ package com.fastcampus.thread.service;
 
 
 import com.fastcampus.thread.model.Post;
+import com.fastcampus.thread.model.PostPostRequestBody;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -22,7 +23,17 @@ public class PostService {
         return posts;
     }
 
-    public Optional<Post> getPost(Long postId) {
+    public Optional<Post> getPostByPostId(Long postId) {
         return posts.stream().filter(post -> postId.equals(post.getPostId())).findFirst();
+    }
+
+
+    public Post createPost(PostPostRequestBody postPostRequestBody) {
+        long newPostId = posts.stream().mapToLong(Post::getPostId).max().orElse(0L) + 1;
+        Post post = new Post(newPostId, postPostRequestBody.getBody(), null);
+        // max()는 long을 반환하기 때문에 mapToLong()을 사용해야함
+        //
+        posts.add(post);
+        return post;
     }
 }
