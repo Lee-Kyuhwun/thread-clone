@@ -1,33 +1,30 @@
 package com.fastcampus.thread.model;
 
+import com.fastcampus.thread.model.entity.PostEntity;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import java.time.ZonedDateTime;
 import java.util.Objects;
 
-@Getter
-@Setter
-@ToString
-@AllArgsConstructor
-@NoArgsConstructor
-public class Post {
+@JsonInclude(JsonInclude.Include.NON_NULL) // null인 경우 json으로 변환하지 않음
+public record Post(
+        Long id,
+        String body,
+        ZonedDateTime createdDateTime,
 
-    private Long postId; // Integer가 아닌 Long으로 수정
+        ZonedDateTime updatedDateTime,
 
-    private String body;
+        ZonedDateTime deletedDateTime
+) {
 
-    private ZonedDateTime createdDateTime; // 글로벌 서비스라 가정하여 ZonedDateTime으로 수정
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Post post = (Post) o;
-        return Objects.equals(postId, post.postId) && Objects.equals(body, post.body) && Objects.equals(createdDateTime, post.createdDateTime);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(postId, body, createdDateTime);
+    public static Post from(PostEntity postEntity){
+        return new Post(
+                postEntity.getPostId(),
+                postEntity.getBody(),
+                postEntity.getCreatedDateTime(),
+                postEntity.getUpdatedDateTime(),
+                postEntity.getDeletedDateTime()
+        );
     }
 }

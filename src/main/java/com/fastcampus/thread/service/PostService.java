@@ -4,6 +4,9 @@ package com.fastcampus.thread.service;
 import com.fastcampus.thread.controller.PostPatchRequestBody;
 import com.fastcampus.thread.model.Post;
 import com.fastcampus.thread.model.PostPostRequestBody;
+import com.fastcampus.thread.model.entity.PostEntity;
+import com.fastcampus.thread.repository.PostEntityRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -15,24 +18,28 @@ import java.util.Optional;
 
 @Service
 public class PostService {
-    private static final List<Post> posts = new ArrayList<>();
 
-    static {
-        posts.add(new Post(1L, "첫번째 글", ZonedDateTime.now()));
-        posts.add(new Post(2L, "2번째 글", ZonedDateTime.now()));
-        posts.add(new Post(3L, "3번째 글", ZonedDateTime.now()));
-    }
+    @Autowired
+    PostEntityRepository postEntityRepository;
+
 
     public List<Post> getPosts() {
-        return posts;
+        var postEntities = postEntityRepository.findAll();
+        return postEntities.stream().map(Post::from).toList(); // toList()는 stream을 List로 변환
     }
 
-    public Optional<Post> getPostByPostId(Long postId) {
-        return posts.stream().filter(post -> postId.equals(post.getPostId())).findFirst();
+    public Post getPostByPostId(Long postId) {
+
+        var postEntity = postEntityRepository.findById(postId)
+                .orElseThrow(
+                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post Not Found") // null인 경우 예외처리
+                );
+        return Post.from(postEntity);
     }
 
 
     public Post createPost(PostPostRequestBody postPostRequestBody) {
+        new PostEntity();
         var newPostId = posts.stream().mapToLong(Post::getPostId).max().orElse(0L) + 1;
         Post post = new Post(newPostId, postPostRequestBody.body(), ZonedDateTime.now());
         // max()는 long을 반환하기 때문에 mapToLong()을 사용해야함
