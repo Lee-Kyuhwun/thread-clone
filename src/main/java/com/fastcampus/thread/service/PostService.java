@@ -39,13 +39,10 @@ public class PostService {
 
 
     public Post createPost(PostPostRequestBody postPostRequestBody) {
-        new PostEntity();
-        var newPostId = posts.stream().mapToLong(Post::getPostId).max().orElse(0L) + 1;
-        Post post = new Post(newPostId, postPostRequestBody.body(), ZonedDateTime.now());
-        // max()는 long을 반환하기 때문에 mapToLong()을 사용해야함
-        //
-        posts.add(post);
-        return post;
+        var postEntity = new PostEntity();
+        postEntity.setBody(postPostRequestBody.body());
+        PostEntity savedPostEntity = postEntityRepository.save(postEntity);
+        return Post.from(savedPostEntity);
     }
 
     public Post updatePost(PostPatchRequestBody postPatchRequestBody, Long postId) {

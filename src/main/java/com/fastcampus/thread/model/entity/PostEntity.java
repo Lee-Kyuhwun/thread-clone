@@ -39,5 +39,16 @@ public class PostEntity {
     @Column
     private ZonedDateTime deletedDateTime;
 
+    @PrePersist // 저장하기 전에 실행 ,JPA가 저장하기전에 실행
+    private void prePersist(){
+        this.createdDateTime = ZonedDateTime.now();
+        this.updatedDateTime = this.createdDateTime;
+    }
+
+    @PreUpdate // 업데이트 하기 전에 실행
+    private void preUpdate(){
+        this.updatedDateTime = ZonedDateTime.now();
+    }
+
 
 }
