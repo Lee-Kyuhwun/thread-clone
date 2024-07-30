@@ -46,28 +46,21 @@ public class PostService {
     }
 
     public Post updatePost(PostPatchRequestBody postPatchRequestBody, Long postId) {
-
-        Optional<Post> postOptional = posts.stream().filter(post -> postId.equals(post.getPostId())).findFirst();
-
-        if(postOptional.isPresent()){
-            Post postToUpate = postOptional.get();
-            postToUpate.setBody(postPatchRequestBody.body());
-            return postToUpate;
-        }else{
-            throw  new ResponseStatusException(HttpStatus.NOT_FOUND, "Post Not Found");
-        }
-
+        var postEntity = postEntityRepository.findById(postId)
+                .orElseThrow(
+                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post Not Found") // null인 경우 예외처리
+                );
+        postEntity.setBody(postPatchRequestBody.body());
+        var save = postEntityRepository.save(postEntity);
+        return Post.from(save);
     }
 
     public void deletePost(Long postId) {
-        Optional<Post> postOptional = posts.stream().filter(post -> postId.equals(post.getPostId())).findFirst();
-
-        if(postOptional.isPresent()){
-            posts.remove(postOptional.get());
-        }else{
-            throw  new ResponseStatusException(HttpStatus.NOT_FOUND, "Post Not Found");
-        }
-
+        var postEntity = postEntityRepository.findById(postId)
+                .orElseThrow(
+                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post Not Found") // null인 경우 예외처리
+                );
+        postEntityRepository.delete(postEntity);
     }
 
 }
