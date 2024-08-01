@@ -4,6 +4,7 @@ package com.fastcampus.thread.controller;
 import com.fastcampus.thread.model.Post;
 import com.fastcampus.thread.model.PostPostRequestBody;
 import com.fastcampus.thread.service.PostService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,13 +14,17 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/posts")
+@Slf4j
 public class PostController {
+
+
 
     @Autowired
     private PostService postService;
 
     @GetMapping
     public ResponseEntity<List<Post>> getPosts(){
+        log.info("getPosts");
         var posts = postService.getPosts();
         return ResponseEntity.ok(posts);
     }
