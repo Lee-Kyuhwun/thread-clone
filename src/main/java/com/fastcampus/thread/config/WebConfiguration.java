@@ -1,12 +1,14 @@
 package com.fastcampus.thread.config;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -16,7 +18,10 @@ import java.util.List;
 @Configuration
 public class WebConfiguration {
 
+    @Autowired
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    @Autowired private JwtExceptionFilter jwtExceptionFilter;
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
@@ -34,6 +39,8 @@ public class WebConfiguration {
         http.authorizeHttpRequests((requests) -> requests.anyRequest().authenticated())
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf((csrf) -> csrf.disable())
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // jwtAuthenticationFilter를 UsernamePasswordAuthenticationFilter 앞에 추가
+                .addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class)
                 .cors(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults());// Customizer.withDefaults() is a shortcut for httpBasic().disable()
 
