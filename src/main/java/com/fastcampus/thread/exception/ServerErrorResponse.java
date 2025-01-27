@@ -2,11 +2,11 @@ package com.fastcampus.thread.exception;
 
 import org.springframework.http.HttpStatus;
 
-public class ClientErrorException  extends  RuntimeException{
+public class ServerErrorResponse extends  RuntimeException{
     private final HttpStatus status;
 
 
-    public ClientErrorException(HttpStatus status, String message) {
+    public ServerErrorResponse(HttpStatus status, String message) {
         super(message);
         this.status = status;
     }

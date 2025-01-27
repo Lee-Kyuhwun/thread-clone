@@ -1,8 +1,8 @@
 package com.fastcampus.thread.service;
 
 
-import com.fastcampus.thread.exception.user.UserAlreadyExistException;
-import com.fastcampus.thread.exception.user.UserNotFoundException;
+import com.fastcampus.thread.exception.user.UserAlreadyExistResponseClinet;
+import com.fastcampus.thread.exception.user.UserNotFoundResponseClinet;
 import com.fastcampus.thread.model.User;
 import com.fastcampus.thread.model.entity.UserEntity;
 import com.fastcampus.thread.repository.UserEntityRepository;
@@ -24,7 +24,7 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userEntityRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException(username));
+                .orElseThrow(() -> new UserNotFoundResponseClinet(username));
     }
 
 
@@ -33,7 +33,7 @@ public class UserService implements UserDetailsService {
         // 가입되어있는지 먼저 판단
         userEntityRepository.findByUsername(username)
                 .ifPresent(user -> {
-                    throw new UserAlreadyExistException(username);
+                    throw new UserAlreadyExistResponseClinet(username);
                 });
 
         var user = UserEntity.of(username, passwordEncoder.encode(password));

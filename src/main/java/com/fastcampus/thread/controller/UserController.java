@@ -4,6 +4,7 @@ package com.fastcampus.thread.controller;
 import com.fastcampus.thread.model.User;
 import com.fastcampus.thread.model.UserSignUpRequestBody;
 import com.fastcampus.thread.service.UserService;
+import jakarta.validation.Valid;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,9 @@ public class UserController {
     UserService userService;
 
     @PostMapping
-    public ResponseEntity<User> signUp(@RequestBody UserSignUpRequestBody userSignUpRequestBody){
+    public ResponseEntity<User> signUp(
+
+           @Valid @RequestBody UserSignUpRequestBody userSignUpRequestBody){
 
         var user  = userService.signUp(userSignUpRequestBody.username(), userSignUpRequestBody.password());
 

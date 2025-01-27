@@ -2,7 +2,7 @@ package com.fastcampus.thread.service;
 
 
 import com.fastcampus.thread.controller.PostPatchRequestBody;
-import com.fastcampus.thread.exception.post.PostNotFoundException;
+import com.fastcampus.thread.exception.post.PostNotFoundResponseClinet;
 import com.fastcampus.thread.model.Post;
 import com.fastcampus.thread.model.PostPostRequestBody;
 import com.fastcampus.thread.model.entity.PostEntity;
@@ -12,10 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class PostService {
@@ -49,7 +46,7 @@ public class PostService {
     public Post updatePost(PostPatchRequestBody postPatchRequestBody, Long postId) {
         var postEntity = postEntityRepository.findById(postId)
                 .orElseThrow(
-                        () -> new PostNotFoundException(postId) // null인 경우 예외처리
+                        () -> new PostNotFoundResponseClinet(postId) // null인 경우 예외처리
                 );
         postEntity.setBody(postPatchRequestBody.body());
         var save = postEntityRepository.save(postEntity);
@@ -59,7 +56,7 @@ public class PostService {
     public void deletePost(Long postId) {
         var postEntity = postEntityRepository.findById(postId)
                 .orElseThrow(
-                        () -> new PostNotFoundException(postId) // null인 경우 예외처리
+                        () -> new PostNotFoundResponseClinet(postId) // null인 경우 예외처리
                 );
         postEntityRepository.delete(postEntity);
     }
