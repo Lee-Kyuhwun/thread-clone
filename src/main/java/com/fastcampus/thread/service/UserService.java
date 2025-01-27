@@ -20,7 +20,6 @@ public class UserService implements UserDetailsService {
     private final UserEntityRepository userEntityRepository;
 
     private BCryptPasswordEncoder passwordEncoder;
-    private final UserEntityRepository userEntityRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
