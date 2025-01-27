@@ -5,7 +5,7 @@ import com.fastcampus.thread.exception.user.UserAlreadyExistException;
 import com.fastcampus.thread.exception.user.UserNotFoundException;
 import com.fastcampus.thread.model.User;
 import com.fastcampus.thread.model.entity.UserEntity;
-import com.fastcampus.thread.repository.UserRepository;
+import com.fastcampus.thread.repository.UserEntityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,12 +17,14 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
 
-    private final UserRepository userRepository;
+    private final UserEntityRepository userEntityRepository;
 
     private BCryptPasswordEncoder passwordEncoder;
+    private final UserEntityRepository userEntityRepository;
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByUsername(username)
+        return userEntityRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException(username));
     }
 
@@ -30,12 +32,12 @@ public class UserService implements UserDetailsService {
     // 회원가입
     public User signUp(String username, String password) {
         // 가입되어있는지 먼저 판단
-        userRepository.findByUsername(username)
+        userEntityRepository.findByUsername(username)
                 .ifPresent(user -> {
                     throw new UserAlreadyExistException(username);
                 });
 
-        var user = UserEntity.of(username, password);
+        var user = UserEntity.of(username, passwordEncoder.encode(password));
 
         // 단방향 알고리즘으로 비밀번호 암호화
 

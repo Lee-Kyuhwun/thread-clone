@@ -85,7 +85,7 @@ public class UserEntity implements UserDetails {
         userEntity.setPassword(password);
 
         //Avatar placeholder 서비스(https://avatars-placeholder.iran.liara.run)를 이용하여 랜덤 아바타 생성
-        userEntity.setProfile("https://avatar.iran.liara.run/public/"+new Random().nextInt(100));
+        userEntity.setProfile("https://avatar.iran.liara.run/public/"+(new Random().nextInt(100)+1));
 //        // 위에 터졌을 경우 아래로 대체
 //        userEntity.setProfile(
 //                "https://dev-jayce.github.io/public/profile/" + new Random().nextInt(100) + ".png"
