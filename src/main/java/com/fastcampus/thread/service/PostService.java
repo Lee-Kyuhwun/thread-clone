@@ -3,9 +3,9 @@ package com.fastcampus.thread.service;
 
 import com.fastcampus.thread.controller.PostPatchRequestBody;
 import com.fastcampus.thread.exception.post.PostNotFoundResponseClinet;
-import com.fastcampus.thread.model.Post;
-import com.fastcampus.thread.model.PostPostRequestBody;
-import com.fastcampus.thread.model.entity.PostEntity;
+import com.fastcampus.thread.model.post.Post;
+import com.fastcampus.thread.model.post.PostPostRequestBody;
+import com.fastcampus.thread.model.post.PostEntity;
 import com.fastcampus.thread.repository.PostEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

@@ -2,9 +2,10 @@ package com.fastcampus.thread.service;
 
 
 import com.fastcampus.thread.exception.user.UserAlreadyExistResponseClinet;
-import com.fastcampus.thread.exception.user.UserNotFoundResponseClinet;
-import com.fastcampus.thread.model.User;
-import com.fastcampus.thread.model.entity.UserEntity;
+import com.fastcampus.thread.exception.user.UserNotFoundException;
+import com.fastcampus.thread.model.user.User;
+import com.fastcampus.thread.model.user.UserAuthenticationResponse;
+import com.fastcampus.thread.model.user.UserEntity;
 import com.fastcampus.thread.repository.UserEntityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,10 +22,12 @@ public class UserService implements UserDetailsService {
 
     private BCryptPasswordEncoder passwordEncoder;
 
+    private final JwtService jwtService;
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userEntityRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundResponseClinet(username));
+                .orElseThrow(() -> new UserNotFoundException(username));
     }
 
 
@@ -43,5 +46,24 @@ public class UserService implements UserDetailsService {
         var savedUserEntity = userEntityRepository.save(user);
 
         return User.from(savedUserEntity);
+    }
+
+
+    // 로그인
+    public UserAuthenticationResponse authenticate(String username, String password) {
+
+        // 저장되어 있는 유저를 찾음
+        var userEntity = userEntityRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+
+        // 비밀번호가 일치하는지 확인
+        if(passwordEncoder.matches(password, userEntity.getPassword())){ // 일치하면
+            // 토큰을 생성해서 반환
+            String accessToken = jwtService.generateAccessToken(userEntity);
+            return new UserAuthenticationResponse(accessToken);
+        }else{
+          throw  new UserNotFoundException();
+        }
+
     }
 }

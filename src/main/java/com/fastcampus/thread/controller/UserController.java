@@ -1,11 +1,12 @@
 package com.fastcampus.thread.controller;
 
 
-import com.fastcampus.thread.model.User;
-import com.fastcampus.thread.model.UserSignUpRequestBody;
+import com.fastcampus.thread.model.user.User;
+import com.fastcampus.thread.model.user.UserAuthenticationResponse;
+import com.fastcampus.thread.model.user.UserLoginRequestBody;
+import com.fastcampus.thread.model.user.UserSignUpRequestBody;
 import com.fastcampus.thread.service.UserService;
 import jakarta.validation.Valid;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,6 +34,17 @@ public class UserController {
         // return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
+    @PostMapping("/authenticate")
+    public ResponseEntity<UserAuthenticationResponse> authentication(
+            @Valid @RequestBody UserLoginRequestBody userLoginRequestBody){
+
+        UserAuthenticationResponse accessToken  = userService.authenticate(userLoginRequestBody.username(), userLoginRequestBody.password());
+
+        // 사용자정보를 클라이언트에게 보낼때는 DTo을 통해서필요한 정보만 보내는것이 좋다.
+
+        return  ResponseEntity.ok(accessToken); // ok 함수는 new가 필요없음
+        // return new ResponseEntity<>(user, HttpStatus.OK);
+    }
 
 
 }

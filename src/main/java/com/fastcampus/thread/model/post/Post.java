@@ -1,11 +1,8 @@
-package com.fastcampus.thread.model;
+package com.fastcampus.thread.model.post;
 
-import com.fastcampus.thread.model.entity.PostEntity;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.*;
 
 import java.time.ZonedDateTime;
-import java.util.Objects;
 
 @JsonInclude(JsonInclude.Include.NON_NULL) // null인 경우 json으로 변환하지 않음
 public record Post(

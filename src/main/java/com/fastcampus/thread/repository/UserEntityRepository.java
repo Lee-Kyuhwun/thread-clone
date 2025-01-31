@@ -1,7 +1,7 @@
 package com.fastcampus.thread.repository;
 
 
-import com.fastcampus.thread.model.entity.UserEntity;
+import com.fastcampus.thread.model.user.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

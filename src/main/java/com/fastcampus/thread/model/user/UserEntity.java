@@ -1,4 +1,4 @@
-package com.fastcampus.thread.model.entity;
+package com.fastcampus.thread.model.user;
 
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;

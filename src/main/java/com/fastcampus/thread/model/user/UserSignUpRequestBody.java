@@ -1,4 +1,4 @@
-package com.fastcampus.thread.model;
+package com.fastcampus.thread.model.user;
 
 
 import jakarta.validation.constraints.NotEmpty;

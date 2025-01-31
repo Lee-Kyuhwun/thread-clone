@@ -1,6 +1,4 @@
-package com.fastcampus.thread.model;
-
-import com.fastcampus.thread.model.entity.UserEntity;
+package com.fastcampus.thread.model.user;
 
 import java.time.ZonedDateTime;
 
