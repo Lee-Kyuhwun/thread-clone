@@ -1,5 +1,6 @@
 package com.fastcampus.thread.model.post;
 
+import com.fastcampus.thread.model.user.User;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.time.ZonedDateTime;
@@ -12,7 +13,8 @@ public record Post(
 
         ZonedDateTime updatedDateTime,
 
-        ZonedDateTime deletedDateTime
+        ZonedDateTime deletedDateTime,
+        User user // 클라이언트한테 내려줄때는 UserDto로 내려준다.
 ) {
 
     public static Post from(PostEntity postEntity){
@@ -21,7 +23,8 @@ public record Post(
                 postEntity.getBody(),
                 postEntity.getCreatedDateTime(),
                 postEntity.getUpdatedDateTime(),
-                postEntity.getDeletedDateTime()
+                postEntity.getDeletedDateTime(),
+                User.from(postEntity.getUser())
         );
     }
 }

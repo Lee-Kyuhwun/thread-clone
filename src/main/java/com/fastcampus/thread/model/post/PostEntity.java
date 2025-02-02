@@ -49,6 +49,13 @@ public class PostEntity {
     @JoinColumn(name = "userid")
     private UserEntity user;
 
+    // postEntity 초기화하는 로직은 UserEntity처럼 of 메서드로 실행
+    public static PostEntity of(String body, UserEntity userEntity){
+        var postEntity = new PostEntity();
+        postEntity.setBody(body);
+        postEntity.setUser(userEntity);
+        return postEntity;
+    }
 
 
     @PrePersist // 저장하기 전에 실행 ,JPA가 저장하기전에 실행
