@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -13,11 +14,16 @@ import java.util.Collection;
 import java.util.Random;
 
 @Entity
-@Table(name = "\"user\"")
+@Table(name = "\"user\"",
+indexes = {@Index(name = "user_username_idx", columnList = "username",unique = true)}//유니크 인덱스로 설정하여 중복생성을 막음
+)
 @SQLDelete(sql = "UPDATE \"user\" SET deletedDateTime = current_timestamp WHERE userid = ?")
 @Getter
 @Setter
 @EqualsAndHashCode
+@SQLRestriction("deletedatetime IS NULL")
+// SQLRestriction은 엔티티에 대해 쿼리시 자동으로 조건추가하도록한다.
+// 즉 소프트 삭제처리가된 데이터가 조회되지 않도록 필터링 하는 용도로 사용
 public class UserEntity implements UserDetails {
 
     @Id

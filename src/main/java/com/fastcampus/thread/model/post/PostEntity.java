@@ -1,5 +1,6 @@
 package com.fastcampus.thread.model.post;
 
+import com.fastcampus.thread.model.user.UserEntity;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -12,7 +13,11 @@ import org.springframework.stereotype.Component;
 import java.time.ZonedDateTime;
 
 @Entity
-@Table(name = "post")
+@Table(name = "post",
+indexes =  {
+        @Index(name = "post_userid_idx",  columnList = "userid")
+}
+)
 @Getter
 @Setter
 @EqualsAndHashCode
@@ -39,6 +44,13 @@ public class PostEntity {
     @Column
     private ZonedDateTime deletedDateTime;
 
+    // TODO: 게시물을 작성한 유저정보
+    @ManyToOne
+    @JoinColumn(name = "userid")
+    private UserEntity user;
+
+
+
     @PrePersist // 저장하기 전에 실행 ,JPA가 저장하기전에 실행
     private void prePersist(){
         this.createdDateTime = ZonedDateTime.now();
@@ -49,6 +61,5 @@ public class PostEntity {
     private void preUpdate(){
         this.updatedDateTime = ZonedDateTime.now();
     }
-
 
 }
