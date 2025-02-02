@@ -14,6 +14,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
@@ -65,5 +68,28 @@ public class UserService implements UserDetailsService {
           throw  new UserNotFoundException();
         }
 
+    }
+
+
+
+    public List<User> getUsers(String query) {
+        List<UserEntity> userEntities;
+        // 검색을 위한 유의미한 데이터가 있는 경우(Blank가 추가된 이유
+        if(query != null && !query.isBlank()){
+            //TODO: query 검색어 기반, 해당 검색어가 username이 포함되어 있는 유저목록 가져오기
+            userEntities = userEntityRepository.findByUsernameContaining(query);
+        }else{
+            userEntities = userEntityRepository.findAll();
+
+        }
+        return userEntities.stream().map(User :: from).toList();
+    }
+
+
+    public User getUser(String username) {
+        // 저장되어 있는 유저를 찾음
+        var userEntity = userEntityRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+        return User.from(userEntity);
     }
 }
