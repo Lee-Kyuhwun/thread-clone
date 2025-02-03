@@ -2,10 +2,12 @@ package com.fastcampus.thread.service;
 
 
 import com.fastcampus.thread.exception.user.UserAlreadyExistResponseClinet;
+import com.fastcampus.thread.exception.user.UserNotAllowedException;
 import com.fastcampus.thread.exception.user.UserNotFoundException;
 import com.fastcampus.thread.model.user.User;
 import com.fastcampus.thread.model.user.UserAuthenticationResponse;
 import com.fastcampus.thread.model.user.UserEntity;
+import com.fastcampus.thread.model.user.UserPatchRequestBody;
 import com.fastcampus.thread.repository.UserEntityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -91,5 +93,27 @@ public class UserService implements UserDetailsService {
         var userEntity = userEntityRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
         return User.from(userEntity);
+    }
+
+    public Object updateUser(String username, UserPatchRequestBody userPatchRequestBody, UserEntity currentUser)  {
+        // 저장되어 있는 유저를 찾음
+        var userEntity = userEntityRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+
+        // 현재 유저와 수정하려는 유저가 같은지 확인
+        if(!userEntity.equals(currentUser)){
+            throw new UserNotAllowedException();
+        }
+
+
+        if(userPatchRequestBody.description() != null){
+            userEntity.setDescription(userPatchRequestBody.description());
+        }
+
+        // 수정된 유저정보를 저장
+        var savedUserEntity = userEntityRepository.save(userEntity);
+
+        return User.from(savedUserEntity);
+
     }
 }

@@ -2,6 +2,7 @@ package com.fastcampus.thread.controller;
 
 
 import com.fastcampus.thread.model.post.Post;
+import com.fastcampus.thread.model.post.PostPatchRequestBody;
 import com.fastcampus.thread.model.post.PostPostRequestBody;
 import com.fastcampus.thread.model.user.UserEntity;
 import com.fastcampus.thread.service.PostService;
@@ -11,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.Authenticator;
 import java.util.List;
 
 @RestController

@@ -1,7 +1,7 @@
 package com.fastcampus.thread.service;
 
 
-import com.fastcampus.thread.controller.PostPatchRequestBody;
+import com.fastcampus.thread.model.post.PostPatchRequestBody;
 import com.fastcampus.thread.exception.post.PostNotFoundException;
 import com.fastcampus.thread.exception.user.UserNotAllowedException;
 import com.fastcampus.thread.model.post.Post;
@@ -9,9 +9,11 @@ import com.fastcampus.thread.model.post.PostPostRequestBody;
 import com.fastcampus.thread.model.post.PostEntity;
 import com.fastcampus.thread.model.user.UserEntity;
 import com.fastcampus.thread.repository.PostEntityRepository;
+import com.fastcampus.thread.repository.UserEntityRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -24,6 +26,8 @@ public class PostService {
     @Autowired
     PostEntityRepository postEntityRepository;
 
+    @Autowired
+    private UserEntityRepository userEntityRepository;
 
     public List<Post> getPosts() {
         var postEntities = postEntityRepository.findAll();
@@ -78,4 +82,14 @@ public class PostService {
         postEntityRepository.delete(postEntity);
     }
 
+    public List<Post> getPostsByUsername(String username) {
+
+        // 저장되어 있는 유저를 찾음
+        var userEntity = userEntityRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+
+        postEntityRepository.findByUserUsername(username);
+
+        return null;
+    }
 }

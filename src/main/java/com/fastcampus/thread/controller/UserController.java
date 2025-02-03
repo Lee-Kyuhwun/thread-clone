@@ -2,10 +2,7 @@ package com.fastcampus.thread.controller;
 
 
 import com.fastcampus.thread.model.post.Post;
-import com.fastcampus.thread.model.user.User;
-import com.fastcampus.thread.model.user.UserAuthenticationResponse;
-import com.fastcampus.thread.model.user.UserLoginRequestBody;
-import com.fastcampus.thread.model.user.UserSignUpRequestBody;
+import com.fastcampus.thread.model.user.*;
 import com.fastcampus.thread.service.PostService;
 import com.fastcampus.thread.service.UserService;
 import jakarta.validation.Valid;
@@ -14,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -67,29 +65,30 @@ public class UserController {
 
     // 단건 조회
     @GetMapping("/{username}")
-    public ResponseEntity<User> getUser(@PathVariable String username){
+    public ResponseEntity<User> getUser(@PathVariable String username,
+                                        @RequestBody UserPatchRequestBody userPatchRequestBody,
+                                        Authentication authentication){
         // 쿼리 검색어가 있을 경우  해당 유저만
-        var user = userService.getUser(username);
+        var user = userService.updateUser(username,userPatchRequestBody, (UserEntity) authentication.getPrincipal());
         return ResponseEntity.ok(user);
     }
 
 
-    // 배터리
+    // 수정(자기소개 등등)`
     @PatchMapping("/{username}")
-    public ResponseEntity<User> getUser(@PathVariable String username){
+    public ResponseEntity<User> updateUser(@PathVariable String username){
         // 쿼리 검색어가 있을 경우  해당 유저만
         var user = userService.getUser(username);
         return ResponseEntity.ok(user);
     }
 
-
+    // 특정유저가 작성한 모든 게시글 조회
     // GET /users/{username}/posts
     @GetMapping("/{username}/posts")
-    public ResponseEntity<List<Post>> getPostsByUsername(@RequestParam(required = false) String username){
-
+    public ResponseEntity<List<Post>> getPostsByUsername(@PathVariable String username){
         // 쿼리 검색어가 있을 경우  해당 유저만
         var posts = postService.getPostsByUsername(username);
-        return ResponseEntity.ok(users);
+        return ResponseEntity.ok(posts);
         // 아닐 경우 전체
 
     }
