@@ -88,8 +88,10 @@ public class PostService {
         var userEntity = userEntityRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
 
-        postEntityRepository.findByUserUsername(username);
+        List<PostEntity> postList = postEntityRepository.findByUser(userEntity);
 
-        return null;
+
+        return postList.stream().map(Post::from).toList(); // toList()는 stream을 List로 변환
+        // return postList.stream().map(Post::from).collect(Collectors.toList()); // toList()는 stream을 List로 변환
     }
 }
