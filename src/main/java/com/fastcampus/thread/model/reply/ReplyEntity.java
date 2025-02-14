@@ -14,7 +14,8 @@ import java.time.ZonedDateTime;
 @Entity
 @Table(name = "reply",
 indexes =  {
-        @Index(name = "reply_userid_idx",  columnList = "userid")
+        @Index(name = "reply_userid_idx",  columnList = "userid"),
+        @Index(name = "reply_postid_idx",  columnList = "postid")
 }
 )
 @Getter

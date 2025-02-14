@@ -9,6 +9,8 @@ import java.time.ZonedDateTime;
 public record Post(
         Long id,
         String body,
+
+        Long repliesCount,
         ZonedDateTime createdDateTime,
 
         ZonedDateTime updatedDateTime,
@@ -21,6 +23,7 @@ public record Post(
         return new Post(
                 postEntity.getPostId(),
                 postEntity.getBody(),
+                postEntity.getRepliesCount(),
                 postEntity.getCreatedDateTime(),
                 postEntity.getUpdatedDateTime(),
                 postEntity.getDeletedDateTime(),

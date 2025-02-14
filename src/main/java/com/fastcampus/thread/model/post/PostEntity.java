@@ -26,7 +26,7 @@ indexes =  {
 // @SQLRestriction은 @SQLDelete와 같이 사용해야함
 //@SQLDelete와 @SQLRestriction은 논리적 삭제를 위한 어노테이션
 // SQLDELETE는 삭제 시간을 기록하는 역할
-// SQLRestriction은 삭제되지 않은 데이터만 조회하는 역할
+// SQLRestriction은 삭제되지 않은 데이터만 조회하는 역할21qa `
 // 논리적 삭제는 데이터를 삭제하지 않고 삭제 여부를 표시하는 방식
 public class PostEntity {
     @Id
@@ -35,6 +35,10 @@ public class PostEntity {
     private Long postId;
     @Column(columnDefinition = "TEXT")
     private String body;
+
+    // 댓글 갯수 저장
+    @Column private Long repliesCount =0L;
+
     @Column
     private ZonedDateTime createdDateTime;
     @Column
