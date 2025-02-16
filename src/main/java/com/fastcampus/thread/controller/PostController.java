@@ -1,6 +1,7 @@
 package com.fastcampus.thread.controller;
 
 
+import com.fastcampus.thread.model.like.LikeEntity;
 import com.fastcampus.thread.model.post.Post;
 import com.fastcampus.thread.model.post.PostPatchRequestBody;
 import com.fastcampus.thread.model.post.PostPostRequestBody;
@@ -71,5 +72,13 @@ public class PostController {
         return ResponseEntity.noContent().build(); // 204
     }
 
+    // 좋아요 생성
+    @PostMapping("/{postId}/likes")
+    public ResponseEntity<Post> toggleLike(@PathVariable("postId") Long postId,
+                                                 Authentication authentication){
+        Object principal = authentication.getPrincipal();
+        var post = postService.toggleLike(postId,(UserEntity) principal);
+        return ResponseEntity.ok(post);
+    }
 
 }

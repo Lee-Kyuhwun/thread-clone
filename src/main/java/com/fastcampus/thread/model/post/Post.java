@@ -11,6 +11,9 @@ public record Post(
         String body,
 
         Long repliesCount,
+
+        Long likesCount,
+
         ZonedDateTime createdDateTime,
 
         ZonedDateTime updatedDateTime,
@@ -24,6 +27,7 @@ public record Post(
                 postEntity.getPostId(),
                 postEntity.getBody(),
                 postEntity.getRepliesCount(),
+                postEntity.getLikesCount(),
                 postEntity.getCreatedDateTime(),
                 postEntity.getUpdatedDateTime(),
                 postEntity.getDeletedDateTime(),

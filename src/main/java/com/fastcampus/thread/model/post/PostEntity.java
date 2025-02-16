@@ -39,6 +39,7 @@ public class PostEntity {
     // 댓글 갯수 저장
     @Column private Long repliesCount =0L;
 
+    @Column private Long likesCount =0L;
     @Column
     private ZonedDateTime createdDateTime;
     @Column
