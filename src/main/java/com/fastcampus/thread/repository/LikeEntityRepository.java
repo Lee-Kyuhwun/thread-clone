@@ -2,7 +2,6 @@ package com.fastcampus.thread.repository;
 
 import com.fastcampus.thread.model.like.LikeEntity;
 import com.fastcampus.thread.model.post.PostEntity;
-import com.fastcampus.thread.model.reply.ReplyEntity;
 import com.fastcampus.thread.model.user.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

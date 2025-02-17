@@ -40,6 +40,10 @@ public class UserEntity implements UserDetails {
 
     @Column private String description;
 
+    @Column private Long followerCount = 0L;
+
+    @Column private Long followingCount = 0L;
+
     @Column
     private ZonedDateTime createdDateTime;
 

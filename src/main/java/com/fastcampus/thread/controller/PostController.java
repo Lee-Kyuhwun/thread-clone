@@ -1,7 +1,6 @@
 package com.fastcampus.thread.controller;
 
 
-import com.fastcampus.thread.model.like.LikeEntity;
 import com.fastcampus.thread.model.post.Post;
 import com.fastcampus.thread.model.post.PostPatchRequestBody;
 import com.fastcampus.thread.model.post.PostPostRequestBody;

@@ -92,4 +92,25 @@ public class UserController {
         // 아닐 경우 전체
 
     }
+
+    // 팔로우 하기
+    @PostMapping("/{username}/follows")
+    public ResponseEntity<User> follow(@PathVariable String username,
+                                       Authentication authentication){
+        // 쿼리 검색어가 있을 경우  해당 유저만
+        User follow = userService.follow(username, (UserEntity) authentication.getPrincipal());
+        return ResponseEntity.ok(follow);
+
+    }
+
+    // 언팔로우 하기
+    @DeleteMapping("/{username}/follows")
+    public ResponseEntity<Void> unfollow(@PathVariable String username,
+                                       Authentication authentication){ // 언팔로우대도 url은 동일
+        // 쿼리 검색어가 있을 경우  해당 유저만
+        userService.unfollow(username, (UserEntity) authentication.getPrincipal());
+        return ResponseEntity.noContent().build();
+        // 아닐 경우 전체
+
+    }
 }
