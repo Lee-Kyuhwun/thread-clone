@@ -21,8 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserController {
 
-    @Autowired
-    UserService userService;
+    private final UserService userService;
 
     PostService postService;
 
@@ -36,7 +35,6 @@ public class UserController {
         // 사용자정보를 클라이언트에게 보낼때는 DTo을 통해서필요한 정보만 보내는것이 좋다.
 
         return  ResponseEntity.ok(user); // ok 함수는 new가 필요없음
-        // return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @PostMapping("/authenticate")
@@ -48,7 +46,6 @@ public class UserController {
         // 사용자정보를 클라이언트에게 보낼때는 DTo을 통해서필요한 정보만 보내는것이 좋다.
 
         return  ResponseEntity.ok(accessToken); // ok 함수는 new가 필요없음
-        // return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
 
@@ -102,6 +99,27 @@ public class UserController {
         return ResponseEntity.ok(follow);
 
     }
+
+    // 팔로우 목록
+    @GetMapping("/{username}/followers")
+    public ResponseEntity<List<User>> getFollowersByUser(@PathVariable String username){
+        // 쿼리 검색어가 있을 경우  해당 유저만
+        var followers = userService.getFollowersByUsername(username);
+        return ResponseEntity.ok(followers);
+        // 아닐 경우 전체
+
+    }
+
+    // 팔로우 목록
+    @GetMapping("/{username}/followings")
+    public ResponseEntity<List<User>> getFollowingsByUser(@PathVariable String username){
+        // 쿼리 검색어가 있을 경우  해당 유저만
+        var followings = userService.getFollowingByUsername(username);
+        return ResponseEntity.ok(followings);
+        // 아닐 경우 전체
+
+    }
+
 
     // 언팔로우 하기
     @DeleteMapping("/{username}/follows")

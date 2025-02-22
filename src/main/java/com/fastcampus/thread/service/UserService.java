@@ -180,4 +180,32 @@ public class UserService implements UserDetailsService {
         userEntityRepository.saveAll(List.of(following, principal));
          
     }
+
+    public List<User> getFollowersByUsername(String username) {
+        // 저장되어 있는 유저를 찾음
+        var userEntity = userEntityRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+
+        // 팔로잉 엔티티를 가져오면 모두 동일한 팔로잉을 가지게 될것이고
+        // 이를 팔로워로 변환해서 반환
+        // username을 팔로우 하는 사람들을 리턴하는 것이다.
+        return followEntityRepository.findByFollowing(username)
+                .stream()
+                .map(FollowEntity::getFollower)
+                .map(User::from)
+                .toList();
+    }
+
+    public List<User> getFollowingByUsername(String username) {
+
+        // 저장되어 있는 유저를 찾음
+        var userEntity = userEntityRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+
+        return followEntityRepository.findByFollower(userEntity)
+                .stream()
+                .map(FollowEntity::getFollowing)
+                .map(User::from)
+                .toList();
+    }
 }
