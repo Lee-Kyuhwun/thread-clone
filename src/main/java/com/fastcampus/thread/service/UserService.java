@@ -102,7 +102,7 @@ public class UserService implements UserDetailsService {
         return User.from(userEntity);
     }
 
-    public Object updateUser(String username, UserPatchRequestBody userPatchRequestBody, UserEntity currentUser)  {
+    public User updateUser(String username, UserPatchRequestBody userPatchRequestBody, UserEntity currentUser)  {
         // 저장되어 있는 유저를 찾음
         var userEntity = userEntityRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));

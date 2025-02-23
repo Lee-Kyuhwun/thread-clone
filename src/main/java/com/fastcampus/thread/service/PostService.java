@@ -36,18 +36,26 @@ public class PostService {
     @Autowired
     private LikeEntityRepository likeEntityRepository;
 
-    public List<Post> getPosts() {
+    public List<Post> getPosts(UserEntity currentUser) {
         var postEntities = postEntityRepository.findAll();
-        return postEntities.stream().map(Post::from).toList(); // toList()는 stream을 List로 변환
+        return postEntities.stream().map(
+                postEntity -> getPostWithLikingStatus(postEntity, currentUser)
+        ).toList(); // toList()는 stream을 List로 변환
     }
 
-    public Post getPostByPostId(Long postId) {
+    public Post getPostByPostId(Long postId, UserEntity currentUser) {
 
         var postEntity = postEntityRepository.findById(postId)
                 .orElseThrow(
                         () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post Not Found") // null인 경우 예외처리
                 );
-        return Post.from(postEntity);
+        return getPostWithLikingStatus(postEntity, currentUser);
+    }
+
+    private Post getPostWithLikingStatus(PostEntity postEntity, UserEntity currentUser) {
+        boolean isLiking = likeEntityRepository.findByUserAndPost(currentUser, postEntity)
+                .isPresent();
+        return Post.from(postEntity,isLiking);
     }
 
 
@@ -56,6 +64,7 @@ public class PostService {
         PostEntity savedPostEntity = postEntityRepository.save(
                 PostEntity.of(postPostRequestBody.body(), currentUser)
         );
+
         return Post.from(savedPostEntity);
     }
 
@@ -89,7 +98,7 @@ public class PostService {
         postEntityRepository.delete(postEntity);
     }
 
-    public List<Post> getPostsByUsername(String username) {
+    public List<Post> getPostsByUsername(String username,UserEntity currentUser) {
 
         // 저장되어 있는 유저를 찾음
         var userEntity = userEntityRepository.findByUsername(username)
@@ -98,7 +107,7 @@ public class PostService {
         List<PostEntity> postList = postEntityRepository.findByUser(userEntity);
 
 
-        return postList.stream().map(Post::from).toList(); // toList()는 stream을 List로 변환
+        return postList.stream().map(postEntity -> getPostWithLikingStatus(postEntity,currentUser)).toList(); // toList()는 stream을 List로 변환
         // return postList.stream().map(Post::from).collect(Collectors.toList()); // toList()는 stream을 List로 변환
     }
 
@@ -112,11 +121,13 @@ public class PostService {
             // 좋아요 취소
             likeEntityRepository.delete(likeEntity.get());
             postEntity.setLikesCount(Math.max(0, postEntity.getLikesCount() - 1)); // 음수가 되지 않도록 방어로직
+            return Post.from(postEntityRepository.save(postEntity),false);
         } else {
             likeEntityRepository.save(LikeEntity.of(currentUser, postEntity));
             postEntity.setLikesCount(postEntity.getLikesCount() + 1);
+            return Post.from(postEntityRepository.save(postEntity), true);
+
         }
 
-        return Post.from(postEntityRepository.save(postEntity));
     }
 }

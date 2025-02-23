@@ -82,9 +82,10 @@ public class UserController {
     // 특정유저가 작성한 모든 게시글 조회
     // GET /users/{username}/posts
     @GetMapping("/{username}/posts")
-    public ResponseEntity<List<Post>> getPostsByUsername(@PathVariable String username){
+    public ResponseEntity<List<Post>> getPostsByUsername(@PathVariable String username,
+                                                         Authentication authentication){
         // 쿼리 검색어가 있을 경우  해당 유저만
-        var posts = postService.getPostsByUsername(username);
+        var posts = postService.getPostsByUsername(username,(UserEntity) authentication);
         return ResponseEntity.ok(posts);
         // 아닐 경우 전체
 

@@ -6,6 +6,7 @@ import com.fastcampus.thread.model.post.PostPatchRequestBody;
 import com.fastcampus.thread.model.post.PostPostRequestBody;
 import com.fastcampus.thread.model.user.UserEntity;
 import com.fastcampus.thread.service.PostService;
+import com.fastcampus.thread.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -25,9 +26,9 @@ public class PostController {
     private PostService postService;
 
     @GetMapping
-    public ResponseEntity<List<Post>> getPosts(){
+    public ResponseEntity<List<Post>> getPosts(Authentication authentication){
         log.info("getPosts");
-        var posts = postService.getPosts();
+        var posts = postService.getPosts((UserEntity) authentication);
         return ResponseEntity.ok(posts);
     }
 
@@ -35,8 +36,11 @@ public class PostController {
 
 
     @GetMapping("/{postId}")
-    public ResponseEntity<Post> getPostByPostId(@PathVariable("postId") Long postId){
-        var post = postService.getPostByPostId(postId);
+    public ResponseEntity<Post> getPostByPostId(@PathVariable("postId") Long postId,
+                                                Authentication authentication
+    //좋아요 상태 파악하기 위해 Authentication 추가
+    ){
+        var post = postService.getPostByPostId(postId, (UserEntity) authentication);
         return ResponseEntity.ok(post);
     }
     
