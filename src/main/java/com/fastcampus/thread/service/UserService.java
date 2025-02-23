@@ -81,7 +81,7 @@ public class UserService implements UserDetailsService {
 
 
 
-    public List<User> getUsers(String query) {
+    public List<User> getUsers(String query,UserEntity currentUser) {
         List<UserEntity> userEntities;
         // 검색을 위한 유의미한 데이터가 있는 경우(Blank가 추가된 이유
         if(query != null && !query.isBlank()){
@@ -89,17 +89,23 @@ public class UserService implements UserDetailsService {
             userEntities = userEntityRepository.findByUsernameContaining(query);
         }else{
             userEntities = userEntityRepository.findAll();
-
         }
-        return userEntities.stream().map(User :: from).toList();
+        return userEntities.stream().map(user -> getUserWithFollowingStatus(user,currentUser)).toList();
     }
 
 
-    public User getUser(String username) {
+    public User getUser(String username,UserEntity currentUser) {
         // 저장되어 있는 유저를 찾음
         var userEntity = userEntityRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
-        return User.from(userEntity);
+
+        return getUserWithFollowingStatus(userEntity,currentUser);
+    }
+
+    private User getUserWithFollowingStatus(UserEntity userEntity, UserEntity currentUser){
+        boolean isFollowing = followEntityRepository.findByFollowerAndFollowing(currentUser, userEntity)
+                .isPresent();
+        return User.from(userEntity,isFollowing);
     }
 
     public User updateUser(String username, UserPatchRequestBody userPatchRequestBody, UserEntity currentUser)  {
@@ -150,11 +156,11 @@ public class UserService implements UserDetailsService {
         userEntityRepository.save(principal);
         // 이렇게 한번에 처리할 수도 있음
         userEntityRepository.saveAll(List.of(following, principal));
-        return User.from(following);
+        return User.from(following,true);
     }
 
     @Transactional
-    public void unfollow(String username, UserEntity principal) {
+    public User unfollow(String username, UserEntity principal) {
         // 저장되어 있는 유저를 찾음
         var following = userEntityRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
@@ -178,34 +184,34 @@ public class UserService implements UserDetailsService {
         userEntityRepository.save(principal);
         // 이렇게 한번에 처리할 수도 있음'/
         userEntityRepository.saveAll(List.of(following, principal));
-         
+         return User.from(following,false);
     }
 
-    public List<User> getFollowersByUsername(String username) {
+    public List<User> getFollowersByUsername(String username,UserEntity currentUser) {
         // 저장되어 있는 유저를 찾음
-        var userEntity = userEntityRepository.findByUsername(username)
+        UserEntity followings = userEntityRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
 
         // 팔로잉 엔티티를 가져오면 모두 동일한 팔로잉을 가지게 될것이고
         // 이를 팔로워로 변환해서 반환
         // username을 팔로우 하는 사람들을 리턴하는 것이다.
-        return followEntityRepository.findByFollowing(username)
-                .stream()
+        List<FollowEntity> followEntities = followEntityRepository.findByFollowing(followings);
+
+        return followEntities.stream()
                 .map(FollowEntity::getFollower)
-                .map(User::from)
+                .map(user -> getUserWithFollowingStatus(user,currentUser))
                 .toList();
     }
 
-    public List<User> getFollowingByUsername(String username) {
+    public List<User> getFollowingByUsername(String username,UserEntity currentUser) {
 
         // 저장되어 있는 유저를 찾음
         var userEntity = userEntityRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
 
-        return followEntityRepository.findByFollower(userEntity)
-                .stream()
+        return followEntityRepository.findByFollower(userEntity).stream()
                 .map(FollowEntity::getFollowing)
-                .map(User::from)
+                .map(user -> getUserWithFollowingStatus(user,currentUser))
                 .toList();
     }
 }

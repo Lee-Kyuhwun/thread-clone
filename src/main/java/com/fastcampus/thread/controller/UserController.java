@@ -51,10 +51,11 @@ public class UserController {
 
 
     @GetMapping()
-    public ResponseEntity<List<User>> getUsers(@RequestParam(required = false) String query){
+    public ResponseEntity<List<User>> getUsers(@RequestParam(required = false) String query
+    ,Authentication authentication){
 
         // 쿼리 검색어가 있을 경우  해당 유저만
-        var users = userService.getUsers(query);
+        var users = userService.getUsers(query,(UserEntity) authentication);
         return ResponseEntity.ok(users);
         // 아닐 경우 전체
 
@@ -73,9 +74,9 @@ public class UserController {
 
     // 수정(자기소개 등등)`
     @PatchMapping("/{username}")
-    public ResponseEntity<User> updateUser(@PathVariable String username){
+    public ResponseEntity<User> updateUser(@PathVariable String username,Authentication authentication){
         // 쿼리 검색어가 있을 경우  해당 유저만
-        var user = userService.getUser(username);
+        var user = userService.getUser(username, (UserEntity)authentication);
         return ResponseEntity.ok(user);
     }
 
@@ -103,9 +104,9 @@ public class UserController {
 
     // 팔로우 목록
     @GetMapping("/{username}/followers")
-    public ResponseEntity<List<User>> getFollowersByUser(@PathVariable String username){
+    public ResponseEntity<List<User>> getFollowersByUser(@PathVariable String username,Authentication authentication){
         // 쿼리 검색어가 있을 경우  해당 유저만
-        var followers = userService.getFollowersByUsername(username);
+        var followers = userService.getFollowersByUsername(username,(UserEntity) authentication);
         return ResponseEntity.ok(followers);
         // 아닐 경우 전체
 
@@ -113,9 +114,9 @@ public class UserController {
 
     // 팔로우 목록
     @GetMapping("/{username}/followings")
-    public ResponseEntity<List<User>> getFollowingsByUser(@PathVariable String username){
+    public ResponseEntity<List<User>> getFollowingsByUser(@PathVariable String username,Authentication authentication){
         // 쿼리 검색어가 있을 경우  해당 유저만
-        var followings = userService.getFollowingByUsername(username);
+        var followings = userService.getFollowingByUsername(username,(UserEntity) authentication);
         return ResponseEntity.ok(followings);
         // 아닐 경우 전체
 
@@ -127,7 +128,7 @@ public class UserController {
     public ResponseEntity<Void> unfollow(@PathVariable String username,
                                        Authentication authentication){ // 언팔로우대도 url은 동일
         // 쿼리 검색어가 있을 경우  해당 유저만
-        userService.unfollow(username, (UserEntity) authentication.getPrincipal());
+        User unfollow = userService.unfollow(username, (UserEntity) authentication.getPrincipal());
         return ResponseEntity.noContent().build();
         // 아닐 경우 전체
 

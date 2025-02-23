@@ -17,7 +17,7 @@ public interface FollowEntityRepository extends JpaRepository<FollowEntity, Long
     List<FollowEntity> findByFollower(UserEntity user); // findby + 필드명 + 조건 이렇게하면 해당 필드로 검색이 가능하다.
     // select * from post where user_username = ?
 
-    List<FollowEntity> findByFollowing(String username); // findby + 필드명 + 조건 이렇게하면 해당 필드로 검색이 가능하다.
+    List<FollowEntity> findByFollowing(UserEntity user); // findby + 필드명 + 조건 이렇게하면 해당 필드로 검색이 가능하다.
 
 
     //없을수도 있기때문에 Optional로 감싸준다.
