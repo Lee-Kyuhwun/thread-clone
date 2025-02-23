@@ -3,15 +3,18 @@ package com.fastcampus.thread.service;
 
 import com.fastcampus.thread.exception.FollowAlreadyException;
 import com.fastcampus.thread.exception.InvalidFollowException;
+import com.fastcampus.thread.exception.post.PostNotFoundException;
 import com.fastcampus.thread.exception.user.UserAlreadyExistResponseClinet;
 import com.fastcampus.thread.exception.user.UserNotAllowedException;
 import com.fastcampus.thread.exception.user.UserNotFoundException;
 import com.fastcampus.thread.model.follow.FollowEntity;
-import com.fastcampus.thread.model.user.User;
-import com.fastcampus.thread.model.user.UserAuthenticationResponse;
-import com.fastcampus.thread.model.user.UserEntity;
-import com.fastcampus.thread.model.user.UserPatchRequestBody;
+import com.fastcampus.thread.model.like.LikeEntity;
+import com.fastcampus.thread.model.post.PostEntity;
+import com.fastcampus.thread.model.reply.Reply;
+import com.fastcampus.thread.model.user.*;
 import com.fastcampus.thread.repository.FollowEntityRepository;
+import com.fastcampus.thread.repository.LikeEntityRepository;
+import com.fastcampus.thread.repository.PostEntityRepository;
 import com.fastcampus.thread.repository.UserEntityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -36,6 +39,8 @@ public class UserService implements UserDetailsService {
 
     private final FollowEntityRepository followEntityRepository;
 
+    private final PostEntityRepository postEntityRepository;
+    private final LikeEntityRepository likeEntityRepository;
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userEntityRepository.findByUsername(username)
@@ -213,5 +218,55 @@ public class UserService implements UserDetailsService {
                 .map(FollowEntity::getFollowing)
                 .map(user -> getUserWithFollowingStatus(user,currentUser))
                 .toList();
+    }
+
+
+    public List<Follower> getFolllowersByUserName(String username, UserEntity authentication) {
+        // 저장되어 있는 유저를 찾음
+        UserEntity followings = userEntityRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+        var followEntities = followEntityRepository.findByFollowing(followings);
+        return followEntities.stream()
+                .map(
+                        followEntity -> Follower.from(getUserWithFollowingStatus(followEntity.getFollower(),authentication),
+                                followEntity.getCreatedDateTime())
+                ).toList();
+
+    }
+
+    public List<LikedUser> getLikedUsersByPostId(Long postId, UserEntity currentUser) {
+        // 게시물 기준으로 좋아요 누른 사람들을 가져옴
+        var postEntity = postEntityRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException(postId));
+
+
+        List<LikeEntity> likeEntities = likeEntityRepository.findByPost(postEntity);
+
+        return likeEntities.stream()
+                .map(
+                        likeEntity -> getLikedUserWithFollowingStatus(likeEntity, currentUser, postEntity, postId)
+                ).toList();
+    }
+
+
+    private LikedUser getLikedUserWithFollowingStatus(LikeEntity likeEntity, UserEntity currentUser, PostEntity postEntity, Long postId){
+        List<LikeEntity> likeEntities = likeEntityRepository.findByPost(postEntity);
+        var user = likeEntity.getUser();
+        User userWithFollowingStatus = getUserWithFollowingStatus(user, currentUser);
+        return LikedUser.from(userWithFollowingStatus, likeEntity.getCreatedDateTime(),postId);
+    }
+
+    public List<LikedUser> getLikedUsersByUser(String username, UserEntity authentication) {
+        UserEntity userEntity = userEntityRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+        List<PostEntity> postEntities = postEntityRepository.findByUser(userEntity);
+
+        return postEntities.stream().flatMap(
+                // flatMap 메서드는 스트림의 각 요소에 함수를 적용하고 생성된 각각의 스트림을 하나의 스트림으로 연결하는 기능을 수행합니다.
+                // 여기서는 각 postEntity에 대해 좋아요를 찾고 이를 LikedUser 객체의 스트림으로 변환합니다.
+                postEntity -> likeEntityRepository.findByPost(postEntity).stream()
+                        .map(likeEntity -> getLikedUserWithFollowingStatus(likeEntity, authentication, postEntity, postEntity.getPostId()))
+        ).toList();
+
     }
 }

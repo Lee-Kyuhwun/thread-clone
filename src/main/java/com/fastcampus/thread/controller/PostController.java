@@ -4,6 +4,7 @@ package com.fastcampus.thread.controller;
 import com.fastcampus.thread.model.post.Post;
 import com.fastcampus.thread.model.post.PostPatchRequestBody;
 import com.fastcampus.thread.model.post.PostPostRequestBody;
+import com.fastcampus.thread.model.user.LikedUser;
 import com.fastcampus.thread.model.user.UserEntity;
 import com.fastcampus.thread.service.PostService;
 import com.fastcampus.thread.service.UserService;
@@ -25,6 +26,8 @@ public class PostController {
     @Autowired
     private PostService postService;
 
+    @Autowired private  UserService userService;
+
     @GetMapping
     public ResponseEntity<List<Post>> getPosts(Authentication authentication){
         log.info("getPosts");
@@ -38,11 +41,21 @@ public class PostController {
     @GetMapping("/{postId}")
     public ResponseEntity<Post> getPostByPostId(@PathVariable("postId") Long postId,
                                                 Authentication authentication
-    //좋아요 상태 파악하기 위해 Authentication 추가
+                                                //좋아요 상태 파악하기 위해 Authentication 추가
     ){
         var post = postService.getPostByPostId(postId, (UserEntity) authentication);
         return ResponseEntity.ok(post);
     }
+
+    @GetMapping("/{postId}/liked-users")
+    public ResponseEntity<List<LikedUser>> getLikedUsersByPostId(@PathVariable("postId") Long postId,
+                                                                 Authentication authentication
+                                                                 //좋아요 상태 파악하기 위해 Authentication 추가
+    ){
+        var post = userService.getLikedUsersByPostId(postId, (UserEntity) authentication);
+        return ResponseEntity.ok(post);
+    }
+
     
     @PostMapping
     public ResponseEntity<Post> createPost(@RequestBody PostPostRequestBody postPostRequestBody,

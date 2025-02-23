@@ -2,8 +2,10 @@ package com.fastcampus.thread.controller;
 
 
 import com.fastcampus.thread.model.post.Post;
+import com.fastcampus.thread.model.reply.Reply;
 import com.fastcampus.thread.model.user.*;
 import com.fastcampus.thread.service.PostService;
+import com.fastcampus.thread.service.ReplyService;
 import com.fastcampus.thread.service.UserService;
 import jakarta.validation.Valid;
 import lombok.Getter;
@@ -24,6 +26,8 @@ public class UserController {
     private final UserService userService;
 
     PostService postService;
+
+    private final ReplyService replyService;
 
     @PostMapping
     public ResponseEntity<User> signUp(
@@ -133,4 +137,36 @@ public class UserController {
         // 아닐 경우 전체
 
     }
+
+    //
+    @GetMapping("/{username}/replies")
+    public ResponseEntity<List<Reply>> getRepliesByUser (@PathVariable String username, Authentication authentication){
+        // 쿼리 검색어가 있을 경우  해당 유저만
+        var followers = replyService.getRepliesByUser(username);
+        return ResponseEntity.ok(followers);
+        // 아닐 경우 전체
+
+    }
+
+
+    @GetMapping("/{username}/followers")
+    public ResponseEntity<List<Follower>> getFollowerByUserName (@PathVariable String username, Authentication authentication){
+        // 쿼리 검색어가 있을 경우  해당 유저만
+        var followers = userService.getFolllowersByUserName(username,(UserEntity) authentication);
+        return ResponseEntity.ok(followers);
+        // 아닐 경우 전체
+    }
+
+    @GetMapping("/{username}/liked-users")
+    public ResponseEntity<List<LikedUser>> getLikedUserByUser(@PathVariable String username,Authentication authentication){
+        // 쿼리 검색어가 있을 경우  해당 유저만
+        var likedUsersByUser = userService.getLikedUsersByUser(username,(UserEntity) authentication);
+        return ResponseEntity.ok(likedUsersByUser);
+        // 아닐 경우 전체
+
+    }
+
+
+
+
 }

@@ -8,6 +8,7 @@ import com.fastcampus.thread.exception.user.UserNotAllowedException;
 import com.fastcampus.thread.model.post.Post;
 import com.fastcampus.thread.model.post.PostPostRequestBody;
 import com.fastcampus.thread.model.post.PostEntity;
+import com.fastcampus.thread.model.user.LikedUser;
 import com.fastcampus.thread.model.user.UserEntity;
 import com.fastcampus.thread.repository.LikeEntityRepository;
 import com.fastcampus.thread.repository.PostEntityRepository;
@@ -130,4 +131,6 @@ public class PostService {
         }
 
     }
+
+
 }
